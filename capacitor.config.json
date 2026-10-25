@@ -1,17 +1,17 @@
-{
-  "appId": "com.notein.app",
-  "appName": "Notein",
-  "webDir": "dist",
-  "bundledWebRuntime": false,
-  "plugins": {
-    "AdMob": {
-      "appId": "ca-app-pub-8040192021722484~4762615273",
-      "bannerAdId": "ca-app-pub-8040192021722484/3217685035",
-      "interstitialAdId": "ca-app-pub-8040192021722484/5321018477",
-      "nativeAdId": "ca-app-pub-8040192021722484/8278440025"
+import type { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  appId: 'com.youcef.notespro',
+  appName: 'Notes Pro',
+  webDir: 'dist',
+  plugins: {
+    AdMob: {
+      appId: 'ca-app-pub-8040192021722484~9875214847'
     }
   },
-  "server": {
-    "androidScheme": "https"
+  android: {
+    allowMixedContent: true
   }
-}
+};
+
+export default config;
