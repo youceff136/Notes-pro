@@ -1,88 +1,106 @@
-import { AdMobConfig } from './types';
 
-export const ADMOB_CONFIG: AdMobConfig = {
-  appId: 'ca-app-pub-8040192021722484~9875214847',
-  bannerAdUnitId: 'ca-app-pub-8040192021722484/3217685035',
-  interstitialAdUnitId: 'ca-app-pub-8040192021722484/5321018477',
-  nativeAdUnitId: 'ca-app-pub-8040192021722484/8278440025'
-} as any;
+import { Capacitor } from '@capacitor/core';
 
-export const ANDROID_APP_ID = 'ca-app-pub-8040192021722484~9875214847';
+let AdMob: any = null;
+let isInitialized = false;
 
-// بيانات وهمية للعرض فقط في الويب
-export const SAMPLE_NATIVE_ADS: any[] = [];
+// معرفاتك الحقيقية
+const AD_IDS = {
+  BANNER: 'ca-app-pub-8040192021722484/3217685035',
+  INTERSTITIAL: 'ca-app-pub-8040192021722484/5321018477',
+  NATIVE: 'ca-app-pub-8040192021722484/8278440025'
+};
 
-class AdMobManager {
-  private isInitialized = false;
-  private actionCount = 0;
-  private readonly SHOW_AFTER_ACTIONS = 2;
+async function getAdMob() {
+  if (AdMob) return AdMob;
+  try {
+    const mod = await import('@capacitor-community/admob');
+    AdMob = mod.AdMob;
+    return AdMob;
+  } catch (e) {
+    console.log('AdMob not available', e);
+    return null;
+  }
+}
 
+export const admobService = {
   async initialize() {
-    try {
-      // @ts-ignore
-      if (typeof window !== 'undefined' && (window as any).Capacitor?.isPluginAvailable?.('AdMob')) {
-        const { AdMob } = await import('@capacitor-community/admob');
-        await AdMob.initialize({
-          requestTrackingAuthorization: true,
-          testingDevices: [],
-          initializeForTesting: false
-        });
-        console.log('[AdMob Native] Initialized with REAL IDs:', ADMOB_CONFIG);
-        this.loadInterstitial();
-        this.showBanner();
-      } else {
-        console.log('[AdMob Web] Using REAL ad units:', ADMOB_CONFIG);
-      }
-      this.isInitialized = true;
-    } catch (e) {
-      console.warn('[AdMob] Init error', e);
-      this.isInitialized = true;
+    if (isInitialized) return;
+    if (!Capacitor.isNativePlatform()) {
+      console.log('AdMob: web platform, skip');
+      return;
     }
-  }
-
-  private async showBanner() {
     try {
-      const { AdMob, BannerAdSize, BannerAdPosition } = await import('@capacitor-community/admob');
-      await AdMob.showBanner({
-        adId: ADMOB_CONFIG.bannerAdUnitId,
-        adSize: BannerAdSize.BANNER,
-        position: BannerAdPosition.BOTTOM_CENTER,
-        margin: 0,
-        isTesting: false
+      const admob = await getAdMob();
+      if (!admob) return;
+      
+      await admob.initialize({
+        requestTrackingAuthorization: false,
+        testingDevices: [],
+        initializeForTesting: false // false = إعلانات حقيقية
       });
-    } catch {}
-  }
+      isInitialized = true;
+      console.log('AdMob initialized with REAL IDs');
+    } catch (e) {
+      console.log('AdMob init failed, continue without ads', e);
+    }
+  },
 
-  private async loadInterstitial() {
+  async showBanner() {
     try {
-      const { AdMob } = await import('@capacitor-community/admob');
-      await AdMob.prepareInterstitial({
-        adId: ADMOB_CONFIG.interstitialAdUnitId,
-        isTesting: false
+      const admob = await getAdMob();
+      if (!admob || !isInitialized) return;
+      if (!Capacitor.isNativePlatform()) return;
+      
+      await admob.showBanner({
+        adId: AD_IDS.BANNER,
+        adSize: 'BANNER',
+        position: 'BOTTOM_CENTER',
+        margin: 0
       });
+      console.log('Banner shown: ', AD_IDS.BANNER);
+    } catch (e) {
+      console.log('Banner failed', e);
+    }
+  },
+
+  async hideBanner() {
+    try {
+      const admob = await getAdMob();
+      if (admob) await admob.hideBanner();
     } catch {}
-  }
+  },
 
   async showInterstitial() {
     try {
-      const { AdMob } = await import('@capacitor-community/admob');
-      await AdMob.showInterstitial();
-      setTimeout(() => this.loadInterstitial(), 1000);
-    } catch {}
-  }
-
-  shouldShowInterstitialOnAction(): boolean {
-    this.actionCount++;
-    if (this.actionCount % this.SHOW_AFTER_ACTIONS === 0) {
-      this.actionCount = 0;
-      return true;
+      const admob = await getAdMob();
+      if (!admob || !isInitialized) return;
+      if (!Capacitor.isNativePlatform()) return;
+      
+      await admob.prepareInterstitial({
+        adId: AD_IDS.INTERSTITIAL
+      });
+      await admob.showInterstitial();
+      console.log('Interstitial shown: ', AD_IDS.INTERSTITIAL);
+    } catch (e) {
+      console.log('Interstitial failed', e);
     }
-    return false;
+  },
+
+  async showNative() {
+    try {
+      const admob = await getAdMob();
+      if (!admob || !isInitialized) return;
+      if (!Capacitor.isNativePlatform()) return;
+      // Native / MREC
+      await admob.showBanner({
+        adId: AD_IDS.NATIVE,
+        adSize: 'MEDIUM_RECTANGLE',
+        position: 'CENTER',
+        margin: 100
+      });
+    } catch (e) {
+      console.log('Native failed', e);
+    }
   }
-
-  getAdConfig() { return ADMOB_CONFIG; }
-  getSampleNativeAd() { return null; }
-}
-
-export const admobService = new AdMobManager();
-export default admobService;
+};
