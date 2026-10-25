@@ -23,6 +23,7 @@
     "motion": "^12.23.24"
   },
   "devDependencies": {
+        "@capacitor-community/admob": "^5.0.0",
     "@types/node": "^22.14.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
