@@ -1,0 +1,6 @@
+{
+  "name": "Notein - Notes & To-Do Organizer",
+  "description": "A sleek, privacy-focused notes and to-do organizer with smart folders, PIN lock, and Arabic/multi-language support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
