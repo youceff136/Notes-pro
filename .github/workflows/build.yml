@@ -1,56 +1,37 @@
 name: Build APK and AAB
-on:
-  push:
-    branches: [ main, master ]
-  workflow_dispatch:
+on: push
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          
-      - name: Fix npm bug
-        run: |
-          rm -f package-lock.json
-          npm cache clean --force
-          npm install -g npm@latest
-
-      - name: Install deps
-        run: npm install --legacy-peer-deps --no-package-lock
-
-      - name: Build web
+          node-version: 18
+      - name: Downgrade npm to fix bug
+        run: npm install -g npm@9
+      - name: Install
+        run: npm install --force
+      - name: Build
         run: npm run build
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Build APK and AAB
+      - uses: android-actions/setup-android@v3
+      - name: Make APK AAB
         run: |
           npx cap add android || true
-          npx cap sync android
+          npx cap sync
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
           ./gradlew bundleRelease
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: APK
-          path: android/app/build/outputs/apk/debug/*.apk
-
-      - name: Upload AAB
-        uses: actions/upload-artifact@v4
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+      - uses: actions/upload-artifact@v4
         with:
           name: AAB
-          path: android/app/build/outputs/bundle/release/*.aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
