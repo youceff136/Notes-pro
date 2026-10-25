@@ -1,90 +1,86 @@
-/**
- * AdMob Management Service for Notein
- * Supports Web fallback/preview and Android Capacitor/Cordova native APK & AAB integration
- */
+import { AdMobConfig, بيانات الإعلانات الأصلية } from './types';
 
-import { AdMobConfig, NativeAdData } from './types';
-
-export const ADMOB_CONFIG: AdMobConfig = {
-  appId: 'ca-app-pub-8040192021722484/4762615273',
-  bannerAdUnitId: 'ca-app-pub-8040192021722484/3217685035',
-  interstitialAdUnitId: 'ca-app-pub-8040192021722484/5321018477',
-  nativeAdUnitId: 'ca-app-pub-8040192021722484/8278440025',
+ثابت ADMOB_CONFIG:AdMobConfig = {
+  معرف التطبيق:'ca-app-pub-8040192021722484~9875214847',
+  bannerAdUnitId:'ca-app-pub-8040192021722484/3217685035',
+  معرف الوحدة الإعلانية البينية:'ca-app-pub-8040192021722484/5321018477',
+  معرف الوحدة الإعلانية الأصلية:"ca-app-pub-8040192021722484/8278440025",
 };
 
-// Android Manifest formatted App ID
-export const ANDROID_APP_ID = 'ca-app-pub-8040192021722484~4762615273';
+// معرف التطبيق ينطبق ملف Android Manifest
+ثابت ANDROID_APP_ID = 'ca-app-pub-8040192021722484~9875214847';
 
-// Sample sponsored ad creatives for native ads in feed
-export const SAMPLE_NATIVE_ADS: NativeAdData[] = [
-  {
-    id: 'ad-native-1',
-    headline: 'Google Workspace Cloud Tools',
-    body: 'احصل على مساحة تخزين سحابية غير محدودة وأدوات إنتاجية متقدمة لفرق العمل.',
-    callToAction: 'تثبيت الآن',
-    advertiser: 'Google LLC',
-    rating: 4.8,
-    iconUrl: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=120&q=80',
-    coverUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80',
-    price: 'مجاني',
-  },
-  {
-    id: 'ad-native-2',
-    headline: 'تطبيق تنظيم الوقت والمهام الذكي',
-    body: 'ضاعف إنتاجيتك اليومية ونظم أهدافك مع التذكيرات الذكية بدون أي تشتيت.',
-    callToAction: 'معرفة المزيد',
-    advertiser: 'Productivity Labs',
-    rating: 4.9,
-    iconUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80',
-    coverUrl: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=600&q=80',
-    price: 'مجاني',
-  },
+// نماذج إبداعية للإعلانات الممولة الإعلانية الأصلية في موجز الأخبار
+ثابت إعلانات أصلية نموذجية: بيانات الإعلانات الأصلية[] = [
+{
+  بطاقة تعريف:'ad-native-1',
+  عنوان رئيسي:'أدوات جوجل ورك سبيس السحابية',
+  جسم:'احصل على مساحة تخزينية غير محدودة غير محدودة محدودة إضافية متعددة لفرق العمل',
+  دعوة للعمل:'الآن',
+  شركة جوجل المحدودة:المعلن,
+  تصنيف:4.8,
+  iconUrl:'https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=120&q=80',
+  غلاف URL:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80',
+  سعر:'مجان',
+},
+{
+  بطاقة تعريف:'ad-native-2',
+  عنوان رئيسي:'تطبيق تنظيم الوقت والمهام الذكي',
+  جسم:'ضاعف إنتاجك اليومي ونظم أهدافك بالتذكيرات الذكية دون أي تشتيت',
+  دعوة للعمل:'الآن أكثر',
+  مختبرات الإنتاجية:المعلن,
+  تصنيف:4.9,
+  iconUrl:'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80',
+  غلاف URL:'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=600&q=80',
+  سعر:'مجان',
+},
 ];
 
-class AdMobManager {
-  private isInitialized = false;
-  private actionCounter = 0;
-  private readonly ACTIONS_BETWEEN_INTERSTITIALS = 2; // trigger interstitial every 2 note saves
+فصل AdMob { مدير الإعلانات على AdMob فصل {
+  خطأ شائع = تم التهيئة خاص;
+  عداد الإجراءات خاص = 0;
+  تشغيل الفاصل الزمني كل حفظتين للملاحظتين = 2; مشاهد بين الفواصل الإعلانية للقراءة فقط خاص
 
-  public async initialize(): Promise<void> {
-    if (this.isInitialized) return;
-
-    try {
-      // Check if running in native Capacitor environment
-      const win = window as any;
-      if (win?.Capacitor?.isPluginAvailable('AdMob')) {
-        await win.Capacitor.Plugins.AdMob.initialize({
-          requestTrackingAuthorization: true,
-          testingDevices: [],
-          initializeForTesting: false,
+  فارغ:بعد(تهيئة غير متزامن عام) {
+    يعود; (تم التهيئة،هذا) لو
+    يحاول {
+      // التحقق مما إذا كان يعمل في بيئة Capacitor الأصلية
+      أي مثال نافذة = بقف ثابت;
+      لو مثال نافذة،isPluginAvailable('AdMob') {
+        انتظر مكت،تهيئة.أدوات الإعلانات.أدموب({
+          حقيقي:طلب تفويض التتبع
+          الاختبار:أجهزة[],
+          خطأ مشروع تهيئة الاختبار,
         });
-        console.log('[AdMob Native] Initialized successfully');
-      } else {
-        console.log('[AdMob Web] Initialized in preview mode with real ad units:', ADMOB_CONFIG);
+        (تمت تهيئة [AdMob Native] بنجاح)سجل،وحدة التحكم;
+      } آخر {
+        تم التهيئة في وضع المعاينة باستخدام وحدات إعلانية حقيقية ADMOB_CONFIG; سجل[AdMob Web]،وحدة التحكم
       }
-      this.isInitialized = true;
-    } catch (e) {
-      console.warn('[AdMob] Initialization notice:', e);
-      this.isInitialized = true;
+      حقيقي = تم التهيئة،هذا
+    } يمسك (ه) {
+      ه،إظهار تهيئة [AdMob] تحذير،وحدة التحكم;
+      حقيقي = تم التهيئة،هذا
     }
   }
 
-  public shouldShowInterstitialOnAction(): boolean {
-    this.actionCounter++;
-    if (this.actionCounter >= this.ACTIONS_BETWEEN_INTERSTITIALS) {
-      this.actionCounter = 0;
-      return true;
+  منطقي { يجب عرض إعلان بيني بعد اتخاذ إجراء عام:
+    عداد الإجراءات هذا++;
+    لو هذا = عداد الإجراءات هذا % مشاهد بين الفواصل الإعلانية {
+      عداد الإجراءات هذا = 0;
+      يعود حقيقي;
     }
-    return false;
+    يعود خطأ شائع;
   }
 
-  public getAdConfig(): AdMobConfig {
-    return ADMOB_CONFIG;
+  عام getAdConfig():AdMobConfig {
+    يعود ADMOB_CONFIG;
   }
 
-  public getSampleNativeAd(index = 0): NativeAdData {
-    return SAMPLE_NATIVE_ADS[index % SAMPLE_NATIVE_ADS.length];
+  عام getSampleNativeAd(فهرس = 0):بيانات الإعلانات الأصلية {
+    يعود إعلانات أصلية نموذجية[فهرس % إعلانات أصلية نموذجية.طول];
   }
 }
 
-export const admobService = new AdMobManager();
+ثابت AdMob خدمة = جديد AdMob مدير الإعلانات على الإعلانات();
+
+يصدر AdMob خدمة;
