@@ -5,32 +5,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
-      - name: Downgrade npm to fix bug
-        run: npm install -g npm@9
-      - name: Install
-        run: npm install --force
-      - name: Build
+          node-version: 22
+
+      - name: Install deps
+        run: npm install --legacy-peer-deps
+
+      - name: Build web
         run: npm run build
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
+
       - uses: android-actions/setup-android@v3
-      - name: Make APK AAB
+
+      - name: Build APK AAB
         run: |
           npx cap add android || true
-          npx cap sync
+          npx cap sync android
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
           ./gradlew bundleRelease
+
       - uses: actions/upload-artifact@v4
         with:
           name: APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
       - uses: actions/upload-artifact@v4
         with:
           name: AAB
