@@ -84,30 +84,7 @@ export const WEEK_DAYS = [
   { id: 'الأربعاء', label: 'الأربعاء' },
 ];
 
-export const INITIAL_SAMPLE_NOTES: Note[] = [
-  {
-    id: 'note-1',
-    title: 'قائمة مهام الأسبوع 🌟',
-    content: '• مراجعة تصميم التطبيق والملاحظات\n• شراء قهوة عربية ومستلزمات المنزل\n• جدولة اجتماع فريق التطوير ليوم الثلاثاء الساعة 10 صباحاً\n• تجربة ميزة قفل الـ PIN وتأمين الملاحظات المهمة',
-    category: 'شخصي',
-    createdAt: Date.now() - 3600000 * 24 * 2,
-    updatedAt: Date.now() - 3600000 * 4,
-    isPinned: true,
-  },
-  {
-    id: 'note-2',
-    title: 'خطة إطلاق المشروع الجديد 🚀',
-    content: 'الأهداف الرئيسية للربع الأول:\n1. رفع الأداء وتجربة المستخدم بنسبة 40%\n2. توفير التخزين المحلي الآمن دون الحاجة إلى إنترنت\n3. دعم كامل للغات متعددة مع وضع ليلي ناعم ومريح للعين',
-    category: 'العمل',
-    createdAt: Date.now() - 3600000 * 48,
-    updatedAt: Date.now() - 3600000 * 12,
-  },
-  {
-    id: 'note-3',
-    title: 'أفكار ملهمة للقراءة والتعلم 💡',
-    content: 'كتب مقترحة لشهر أكتوبر:\n- التفكير بسرعة وببطء (Daniel Kahneman)\n- العادات الذرية (James Clear)\n- التصميم المريح لواجهات الهاتف الذكية',
-    category: 'أخرى',
-    createdAt: Date.now() - 3600000 * 72,
-    updatedAt: Date.now() - 3600000 * 28,
-  },
+export const INITIAL_SAMPLE_NOTES = [];
+
+
 ];
