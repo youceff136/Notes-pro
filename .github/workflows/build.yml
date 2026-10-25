@@ -13,6 +13,11 @@ jobs:
         with:
           node-version: 22
       
+      - name: Clean old android folder
+        run: |
+          rm -rf android
+          echo "Old android folder deleted, will create fresh one"
+
       - name: Install dependencies
         run: |
           npm install --legacy-peer-deps
@@ -21,10 +26,10 @@ jobs:
       - name: Build web
         run: npm run build
       
-      - name: Generate icons and splash
+      - name: Generate fresh icons
         run: |
-          npx @capacitor/assets generate --android || echo "assets generation failed but continue"
-      
+          npx @capacitor/assets generate --android || echo "assets gen failed"
+
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
@@ -33,7 +38,7 @@ jobs:
       
       - name: Build APK and AAB
         run: |
-          npx cap add android || echo "android exists"
+          npx cap add android
           npx cap sync android
           npx cap copy android
           cd android
