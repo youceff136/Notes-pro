@@ -40,10 +40,6 @@ import {
 import { Note, Screen, SortMode, FontSize, LanguageCode } from './types';
 import { CATEGORIES, LANGUAGES, FONT_SIZES, WEEK_DAYS, INITIAL_SAMPLE_NOTES } from './constants';
 import { translations } from './translations';
-import { admobService } from './admobService';
-import { AdBanner } from './components/AdBanner';
-import { AdNativeCard } from './components/AdNativeCard';
-import { AdInterstitialModal } from './components/AdInterstitialModal';
 
 export default function App() {
   // Local storage keys
@@ -63,9 +59,9 @@ export default function App() {
   const [isPinEnabled, setIsPinEnabled] = useState<boolean>(false);
   const [pinCode, setPinCode] = useState<string | null>(null);
 
-  // AdMob State (Active)
-  const showAds = true;
-  const [showInterstitial, setShowInterstitial] = useState<boolean>(false);
+    // Ads disabled
+  const showAds = false;
+  const [showInterstitial] = useState<boolean>(false);
 
   // App lock state
   const [isAppLocked, setIsAppLocked] = useState<boolean>(false);
@@ -116,8 +112,6 @@ export default function App() {
   // Load from local storage on mount
   useEffect(() => {
     try {
-      admobService.initialize();
-
       const savedNotes = localStorage.getItem(STORAGE_NOTES);
       if (savedNotes) {
         setNotes(JSON.parse(savedNotes));
@@ -175,13 +169,12 @@ export default function App() {
         showTipBanner,
         isPinEnabled,
         pinCode,
-        showAds,
       };
       localStorage.setItem(STORAGE_SETTINGS, JSON.stringify(settingsPayload));
     } catch (e) {
       console.error('Error saving settings', e);
     }
-  }, [language, isDarkMode, defaultCategory, fontSize, weekStartsOn, showTipBanner, isPinEnabled, pinCode, showAds, hasLoaded]);
+  }, [language, isDarkMode, defaultCategory, fontSize, weekStartsOn, showTipBanner, isPinEnabled, pinCode, hasLoaded]);
 
   const t = translations[language] || translations.ar;
   const isRtl = language === 'ar';
@@ -293,13 +286,6 @@ export default function App() {
       showToast(t.noteSaved);
     }
     setNoteModalOpen(false);
-
-    // Trigger Interstitial Ad based on frequency capping
-    if (showAds && admobService.shouldShowInterstitialOnAction()) {
-      setTimeout(() => {
-        setShowInterstitial(true);
-      }, 500);
-    }
   };
 
   // Delete note
@@ -1176,30 +1162,12 @@ export default function App() {
                               </div>
                             </div>
                           </div>
-
-                          {/* Native AdMob in-feed ad seamlessly inserted after 1st or 3rd note */}
-                          {showAds && (idx === 0 || (idx > 0 && idx % 3 === 0)) && (
-                            <AdNativeCard
-                              language={language}
-                              isDarkMode={isDarkMode}
-                              adIndex={idx}
-                            />
-                          )}
                         </React.Fragment>
                       );
                     })}
                   </div>
                 )}
               </main>
-
-              {/* Bottom Sticky AdMob Banner */}
-              <div className="absolute bottom-0 left-0 right-0 z-15 bg-transparent pb-1">
-                <AdBanner
-                  language={language}
-                  isDarkMode={isDarkMode}
-                />
-              </div>
-
               {/* Floating Action Button (FAB) for Creating Note */}
               <button
                 onClick={() => handleOpenNote()}
@@ -2045,13 +2013,6 @@ export default function App() {
           )}
 
           {/* ============================================================ */}
-          {/* ADMOB INTERSTITIAL AD MODAL */}
-          {/* ============================================================ */}
-          {showInterstitial && (
-            <AdInterstitialModal
-              language={language}
-              isDarkMode={isDarkMode}
-              onClose={() => setShowInterstitial(false)}
             />
           )}
 
